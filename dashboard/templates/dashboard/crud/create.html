@@ -1,0 +1,13 @@
+{% extends 'base.admin.html' %}
+
+{% block titulo %}Agregar nuevo Registro{% endblock %}
+
+{% block content %}
+  <div class="card-header">
+    Crear nuevo Registro
+  </div>
+  <div class="card-body">
+    <h4 class="card-title">Datos del Registro</h4>
+    {% include 'dashboard/crud/form.html' %}
+  </div>
+{% endblock %}

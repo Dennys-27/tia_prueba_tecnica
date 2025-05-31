@@ -1,0 +1,89 @@
+# 📊 Dashboard Superstore - Proyecto Django
+
+Este proyecto es un sistema de análisis de ventas basado en el dataset de Superstore. Está desarrollado con **Django** y presenta datos mediante gráficos, tablas y filtros interactivos.
+
+---
+
+## 🧱 Arquitectura del Proyecto
+
+- **Backend:** Django (con consultas SQL directas, sin ORM)
+- **Frontend:** Templates Django + Bootstrap, Chart.js, DataTables, JQuery
+- **Base de Datos:** MySQL 
+- **Autenticación:** Sistema integrado de Django con roles (Administrador, Usuario)
+
+---
+
+## 🚀 Cómo Desplegar el Proyecto
+
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/tu-usuario/dashboard-superstore.git
+   cd dashboard-superstore
+   ```
+
+2. **Crear y activar entorno virtual:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # En Windows: venv\Scripts\activate
+   ```
+
+3. **Instalar dependencias:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configurar base de datos:**
+   - Editar el archivo `settings.py` y actualizar la sección `DATABASES`.
+
+5. **Importar dataset:**
+   - Crear las tablas necesarias (puedes usar scripts SQL).
+   - Importar los datos del dataset Superstore.
+
+6. **Crear superusuario:**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+7. **Ejecutar el servidor:**
+   ```bash
+   python manage.py runserver
+   ```
+
+8. **Acceder desde el navegador:**
+   - URL: `http://localhost:8000/`
+
+---
+
+## 🧭 Funcionalidades del Sistema
+
+- Acceso con autenticación por rol (Admin / Usuario).
+- Aplicación de filtros dinámicos:
+  - Por fechas, categoría, ciudad, estado.
+- Visualización de:
+  - Gráficos (ventas, productos, clientes).
+  - Tablas interactivas (con DataTables).
+- Exportación de datos (opcional o futuro).
+- Eliminación con confirmación usando SweetAlert2.
+
+---
+
+## 🔐 Seguridad
+
+- Validación de formularios y filtros.
+- Protección contra inyección SQL mediante consultas parametrizadas.
+- Control de acceso por permisos y roles.
+
+---
+
+## 🎥 Video Demostrativo
+
+➡️ [Ver demostración en YouTube](#)  
+*(Agrega el enlace cuando lo tengas disponible)*
+
+---
+
+## 👨‍💻 Autor
+
+- **Tu Nombre**
+- Contacto: [tucorreo@ejemplo.com](mailto:tucorreo@ejemplo.com)
+- GitHub: [@tuusuario](https://github.com/tuusuario)
