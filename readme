@@ -37,6 +37,7 @@ Este proyecto es un sistema de análisis de ventas basado en el dataset de Super
 
 5. **Importar dataset:**
    - Crear las tablas necesarias (puedes usar scripts SQL).
+   - SCRIP EN CARPETA BD
    - Importar los datos del dataset Superstore.
    - Existe en el proyecto el archivo cargar_csv.py 
         executar : python cargar_csv.py
