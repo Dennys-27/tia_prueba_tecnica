@@ -1,10 +1,23 @@
-
-  .nav-link:hover {
-    color: #e55353 !important;
-  }
+.nav-link:hover {
+  color: #e55353 !important;
+}
 .main-content-dark {
   background-color: #1c1c1c; /* fondo negro oscuro */
   color: #f8f9fa; /* texto blanco */
   border-left: 5px solid #e55353; /* borde rojo a la izquierda */
   min-height: 60vh;
+}
+.input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.input:focus {
+  border-color: #007bff;
+  outline: none;
 }

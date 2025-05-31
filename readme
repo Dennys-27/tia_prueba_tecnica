@@ -17,7 +17,7 @@ Este proyecto es un sistema de análisis de ventas basado en el dataset de Super
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/tu-usuario/dashboard-superstore.git
+   git clone https://github.com/Dennys-27/tia_prueba_tecnica.git
    cd dashboard-superstore
    ```
 
@@ -38,11 +38,27 @@ Este proyecto es un sistema de análisis de ventas basado en el dataset de Super
 5. **Importar dataset:**
    - Crear las tablas necesarias (puedes usar scripts SQL).
    - Importar los datos del dataset Superstore.
+   - Existe en el proyecto el archivo cargar_csv.py 
+        executar : python cargar_csv.py
+        ruta_csv = r'C:\Users\denni\Downloads\superstore_final_dataset (1).csv'
+        -> COLOCAR RUTA LOCAL DE DONDE DESCARGE EL ARCHIVO
 
 6. **Crear superusuario:**
    ```bash
    python manage.py createsuperuser
    ```
+
+   ** CREAR USUARIO ***
+    1) 
+    from django.contrib.auth.models import User
+
+    User.objects.create_user(
+        username='usuario1',
+        password='usuario123',
+        email='usuario@ejemplo.com',
+        is_staff=False,
+        is_superuser=False
+    )
 
 7. **Ejecutar el servidor:**
    ```bash
@@ -62,8 +78,8 @@ Este proyecto es un sistema de análisis de ventas basado en el dataset de Super
 - Visualización de:
   - Gráficos (ventas, productos, clientes).
   - Tablas interactivas (con DataTables).
-- Exportación de datos (opcional o futuro).
-- Eliminación con confirmación usando SweetAlert2.
+- Exportación de datos  EXCEL, CSV, PDF.
+- Eliminación con confirmación usando SweetAlert2. (CRUD VENTAS)
 
 ---
 
@@ -78,12 +94,12 @@ Este proyecto es un sistema de análisis de ventas basado en el dataset de Super
 ## 🎥 Video Demostrativo
 
 ➡️ [Ver demostración en YouTube](#)  
-*(Agrega el enlace cuando lo tengas disponible)*
+
 
 ---
 
 ## 👨‍💻 Autor
 
-- **Tu Nombre**
-- Contacto: [tucorreo@ejemplo.com](mailto:tucorreo@ejemplo.com)
-- GitHub: [@tuusuario](https://github.com/tuusuario)
+- **DENNYS MARLON TIERRA ALVARADO**
+- Contacto: [dennismarlon14@gmail.com]
+- GitHub: [https://github.com/Dennys-27/]

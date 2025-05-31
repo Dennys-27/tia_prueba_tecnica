@@ -21,19 +21,21 @@ def categorias(request):
 
 @login_required
 def subcategorias(request):
+    categoria = request.GET.get("categoria")  
+    if not categoria:
+        return JsonResponse({'error': 'Parámetro "categoria" es requerido.'}, status=400)
+
     with connection.cursor() as cursor:
-        cursor.execute("SELECT DISTINCT sub_category FROM superstore_data")
+        cursor.execute("""
+            SELECT DISTINCT sub_category 
+            FROM superstore_data 
+            WHERE category = %s
+        """, [categoria])
         sub_categorias = [row[0] for row in cursor.fetchall()]
 
     return JsonResponse(sub_categorias, safe=False)
 
-@login_required
-def subcategorias(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT DISTINCT sub_category FROM superstore_data")
-        sub_categorias = [row[0] for row in cursor.fetchall()]
 
-    return JsonResponse(sub_categorias, safe=False)
 
 @login_required
 def estado(request):
@@ -45,11 +47,24 @@ def estado(request):
 
 @login_required
 def ciudad(request):
+    estado = request.GET.get("estado")
+    if not estado:
+        return JsonResponse({'error': 'Parámetro "estado" es requerido.'}, status=400)
     with connection.cursor() as cursor:
-        cursor.execute("SELECT DISTINCT city FROM superstore_data")
+        cursor.execute("SELECT DISTINCT city FROM superstore_data WHERE state = %s", [estado])
         ciudad = [row[0] for row in cursor.fetchall()]
 
     return JsonResponse(ciudad, safe=False)
+
+
+@login_required
+def producto(request):
+   
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT DISTINCT product_name FROM superstore_data")
+        producto = [row[0] for row in cursor.fetchall()]
+
+    return JsonResponse(producto, safe=False)
 
 
 # FUNCION PRONCIPAL PARA OBTENER LOS DATOS DEL DASHBOARD
@@ -61,6 +76,7 @@ def get_datos(request):
     subcategoria = request.GET.get('subcategoria')
     estado = request.GET.get('estado')
     ciudad = request.GET.get('ciudad')
+    producto = request.GET.get('producto')
 
     where = []
     params = []
@@ -86,6 +102,10 @@ def get_datos(request):
     if ciudad:
         where.append("City = %s")
         params.append(ciudad)
+
+    if producto:
+        where.append("product_name = %s")
+        params.append(producto)
 
     filtro = " AND ".join(where)
     if filtro:
@@ -168,6 +188,7 @@ def get_datos(request):
         barras_categoria = [{'categoria': row[0], 'ventas': row[1]} for row in cursor.fetchall()]
 
 
+
         cursor.execute(f"""
             SELECT Order_Date, COUNT(Sales)
             FROM superstore_data {filtro}
@@ -183,6 +204,24 @@ def get_datos(request):
         """, params)
         barras_categoria_ventas_number = [{'categoria': row[0], 'ventas': row[1]} for row in cursor.fetchall()]
 
+        
+        cursor.execute(f"""
+                    SELECT state, product_name, ventas FROM (
+                        SELECT
+                            state,
+                            product_name,
+                            COUNT(*) as ventas,
+                            ROW_NUMBER() OVER (PARTITION BY state ORDER BY COUNT(*) DESC) as rn
+                        FROM superstore_data
+                        {filtro}
+                        GROUP BY state, product_name
+                    ) t
+                    WHERE rn <= 10
+                    ORDER BY state, ventas DESC
+                """, params)
+        productos_por_ciudades = [{'estados': row[0], 'productos': row[1], 'ventas': row[2]} for row in cursor.fetchall()]
+    
+    
     return JsonResponse({
         'total_ventas': total_ventas,
         'ventas_segmento': ventas_segmento,
@@ -193,7 +232,8 @@ def get_datos(request):
         'linea_tiempo_ventas_number': linea_tiempo_ventas_number,
         'barras_categoria_ventas_number': barras_categoria_ventas_number,
         'numeber_ventas': numeber_ventas,
-        'ventas_segmento_number_ventas': ventas_segmento_number_ventas
+        'ventas_segmento_number_ventas': ventas_segmento_number_ventas,
+        'productos_por_ciudades': productos_por_ciudades
     })
 
 

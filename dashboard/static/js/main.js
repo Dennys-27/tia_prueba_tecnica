@@ -1,5 +1,11 @@
 // main.js completo
 
+
+
+
+
+
+
 function cargarDatos() {
   const fecha_inicio = document.getElementById('fecha_inicio').value;
   const fecha_fin = document.getElementById('fecha_fin').value;
@@ -7,7 +13,7 @@ function cargarDatos() {
   const subcategoria = document.getElementById('subcategoria').value;
   const estado = document.getElementById('estado')?.value || ''; // Manejo de estado opcional
   const ciudad = document.getElementById('ciudad')?.value || ''; // Manejo de ciudad opcional
-
+  const producto = document.getElementById('producto').value;
   const url = new URL('/get_datos/', window.location.origin);
   url.searchParams.append('fecha_inicio', fecha_inicio);
   url.searchParams.append('fecha_fin', fecha_fin);
@@ -15,6 +21,7 @@ function cargarDatos() {
   url.searchParams.append('subcategoria', subcategoria);
   url.searchParams.append('estado', estado);
   url.searchParams.append('ciudad', ciudad);
+  url.searchParams.append('producto', producto);
 
   fetch(url)
     .then(response => response.json())
@@ -167,11 +174,12 @@ function cargarDatos() {
       graficarBarras(data.barras_categoria);
       graficarBarrasVentasNumber(data.barras_categoria_ventas_number);
       graficarLineasVentasNumber(data.linea_tiempo_ventas_number);
+      graficarBarrasProductoVendido(data.productos_por_ciudades);
     })
     .catch(error => {
       console.error('Error al obtener datos:', error);
     });
-} 
+}
 
 
 
@@ -303,6 +311,97 @@ function graficarBarrasVentasNumber(datos) {
 
 
 
+
+function graficarBarrasProductoVendido(datos) {
+  if (!Array.isArray(datos) || datos.length === 0) {
+    console.warn("No hay datos para graficar productos vendidos.");
+    return;
+  }
+
+  const ctx = document.getElementById("grafico_barras_productos_vendidos").getContext("2d");
+
+  // Agrupamos productos por ciudad
+  const ciudades = [...new Set(datos.map(d => d.estados))];
+
+  // Obtenemos productos únicos
+  const productos = [...new Set(datos.map(d => d.productos))];
+
+  // Preparamos colores
+  const colores = [
+    "rgba(54, 162, 235, 0.7)",
+    "rgba(255, 99, 132, 0.7)",
+    "rgba(255, 206, 86, 0.7)",
+    "rgba(75, 192, 192, 0.7)",
+    "rgba(153, 102, 255, 0.7)",
+    "rgba(255, 159, 64, 0.7)",
+    "rgba(199, 199, 199, 0.7)",
+    "rgba(83, 102, 255, 0.7)"
+  ];
+
+  // Creamos datasets por ciudad
+  const datasets = ciudades.map((ciudad, index) => {
+    return {
+      label: ciudad,
+      data: productos.map(producto => {
+        const match = datos.find(d => d.productos === producto && d.estados === ciudad);
+        return match ? match.ventas : 0;
+      }),
+      backgroundColor: colores[index % colores.length]
+    };
+  });
+
+  if (window.graficoBarrasProductoVendidoInstance) {
+    window.graficoBarrasProductoVendidoInstance.destroy();
+  }
+
+  window.graficoBarrasProductoVendidoInstance = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: productos,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Top Productos Más Vendidos por Ciudad"
+        },
+        tooltip: {
+          mode: "index",
+          intersect: false
+        },
+        legend: {
+          position: "top"
+        }
+      },
+      interaction: {
+        mode: "nearest",
+        axis: "x",
+        intersect: false
+      },
+      scales: {
+        x: {
+          stacked: false,
+          title: {
+            display: true,
+            text: "Productos"
+          }
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Ventas"
+          }
+        }
+      }
+    }
+  });
+}
+
+
+
 //USO DE MIS BOTONES ANTIGUO
 /* function cargarCategorias() {
   fetch('/categorias/')
@@ -359,8 +458,35 @@ function cargarOpciones(url, selectId) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+
   cargarOpciones('/categorias/', 'categoria');
-  cargarOpciones('/sub_categorias/', 'subcategoria');
   cargarOpciones('/estado/', 'estado');
-  cargarOpciones('/ciudad/', 'ciudad');
+  cargarOpciones('/producto/', 'producto');
+  //cargarOpciones('/ciudad/', 'ciudad');
+
+
+  document.getElementById('categoria').addEventListener('change', function () {
+    const categoriaSeleccionada = this.value;
+    if (categoriaSeleccionada) {
+      const url = `/sub_categorias/?categoria=${encodeURIComponent(categoriaSeleccionada)}`;
+      cargarOpciones(url, 'subcategoria');
+    } else {
+
+      const subSelect = document.getElementById('subcategoria');
+      subSelect.innerHTML = '<option value="">Seleccione</option>';
+    }
+  });
+
+  document.getElementById('estado').addEventListener('change', function () {
+    const estadoSeleccionada = this.value;
+    if (estadoSeleccionada) {
+      const url = `/ciudad/?estado=${encodeURIComponent(estadoSeleccionada)}`;
+      cargarOpciones(url, 'ciudad');
+    } else {
+
+      const subSelect = document.getElementById('ciudad');
+      subSelect.innerHTML = '<option value="">Seleccione</option>';
+    }
+  });
 });
+
